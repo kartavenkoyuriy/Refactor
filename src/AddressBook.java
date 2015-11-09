@@ -1,34 +1,19 @@
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddressBook {
-
-    public boolean hasMobile(String name) {
-        if (new AddressDb().findPerson(name).getPhoneNumber().getNumber().startsWith("070")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     static {
         new Checker().start();
     }
 
+    /**
+     * Return number of people in DB
+     */
     public int getSize() {
         AddressDb db = new AddressDb();
         List<Person> people = db.getAll();
-        int count = -1;
-        if (count < 0) {
-            Iterator<Person> n = people.iterator();
-            while (n.hasNext()) {
-                ++count;
-            }
-        }
-
-        return count;
+        return people.size();
     }
 
     /**
@@ -37,21 +22,17 @@ public class AddressBook {
      */
     public String getMobile(String name) {
         AddressDb db = new AddressDb();
-        db = new AddressDb();
-
         Person person = db.findPerson(name);
-        PhoneNumber phone = person.getPhoneNumber();
-        db = new AddressDb();
-        return phone.getNumber();
+        return person.getPhoneNumber().getNumber().startsWith("070") ? person.getPhoneNumber().getNumber() : null;
     }
 
     /**
      * Returns all names in the book truncated to the given length.
      */
-    public List getNames(int maxLength) {
+    public List<String> getNames(int maxLength) {
         AddressDb db = new AddressDb();
         List<Person> people = db.getAll();
-        List names = new LinkedList<String>();
+        List<String> names = new ArrayList<>();
         for (Person person : people) {
             String name = person.getName();
             if (name.length() > maxLength) {
@@ -59,10 +40,7 @@ public class AddressBook {
             }
             names.add(name);
         }
-        String oldName = "";
-        oldName = oldName + names;
         return names;
-
     }
 
     /**
@@ -70,19 +48,20 @@ public class AddressBook {
      */
     public List getList() {
         AddressDb db = new AddressDb();
-        List people = db.getAll();
-        Collection f = new LinkedList();
+        List<Person> people = db.getAll();
+        List peopleWithMobilePhones = new ArrayList();
+        if (people == null) {
+            return null;
+        }
         for (Object person : people) {
-            if (((Person) person).getPhoneNumber().getNumber().startsWith("070")) {
-                if (people != null) {
-                    f.add(person);
-                }
+            if (getMobile(((Person) person).getName()) != null) {
+                peopleWithMobilePhones.add(person);
             }
         }
-        return (LinkedList) f;
+        return peopleWithMobilePhones;
     }
 
-    static class Checker extends Thread {
+    static class Checker extends Thread {//wat is this?
         long time = System.currentTimeMillis();
 
         public void run() {
@@ -91,10 +70,9 @@ public class AddressBook {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
+                    //NOP or logging
                 }
             }
-
         }
     }
-
 }
