@@ -9,7 +9,6 @@ public class AddressBook {
         if (new AddressDb().findPerson(name).getPhoneNumber().getNumber().startsWith("070")) {
             return true;
         } else {
-
             return false;
         }
     }
